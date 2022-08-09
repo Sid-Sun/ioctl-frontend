@@ -119,7 +119,7 @@ function App() {
       getSnippetUUID(params.id).then(uuid => {
         setAlert("downloading snippet")
         // @ts-ignore
-        axios.get<SnippetSpecModel>(environment.S3BaseURL + (checkIfEphemeral(params.id) ? uuid : "/ephemeral/" + uuid)).then(snippetSpec => {
+        axios.get<SnippetSpecModel>(environment.S3BaseURL + (checkIfEphemeral(params.id) ? uuid : "ephemeral/" + uuid)).then(snippetSpec => {
           setAlert("decrypting")
           // @ts-ignore
           aeadDecrypt(snippetSpec.data, params.id).then(snippet => {
@@ -158,7 +158,7 @@ function App() {
         }
       }, stack).then(snippetSpec => {
         setAlert("saving")
-        axios.post(environment.APIBaseURL + "/e2e/" + stack.uuid, snippetSpec).then(() => {
+        axios.post(environment.APIBaseURL + "e2e/" + stack.uuid, snippetSpec).then(() => {
           navigate('/' + stack.snippetID, { replace: true })
           setAlert("saved")
           setReadOnly(true)
