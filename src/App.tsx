@@ -107,7 +107,7 @@ function App() {
   }) // runs continuously to ensure editor is full sized
 
   const checkIfEphemeral = (id: string): boolean => {
-    return (id.match(/[A-Z]/g) || []).length > 2
+    return (id.match(/[A-Z]/g) || []).length == 2
   }
 
   useEffect(() => {
@@ -119,7 +119,7 @@ function App() {
       getSnippetUUID(params.id).then(uuid => {
         setAlert("downloading snippet")
         // @ts-ignore
-        axios.get<SnippetSpecModel>(environment.S3BaseURL + (checkIfEphemeral(params.id) ? uuid : "ephemeral/" + uuid)).then(snippetSpec => {
+        axios.get<SnippetSpecModel>(environment.S3BaseURL + (checkIfEphemeral(params.id) ? "ephemeral/" + uuid : uuid)).then(snippetSpec => {
           setAlert("decrypting")
           // @ts-ignore
           aeadDecrypt(snippetSpec.data, params.id).then(snippet => {
