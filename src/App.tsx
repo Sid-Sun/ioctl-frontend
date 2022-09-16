@@ -1,5 +1,5 @@
 import React from 'react';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { Extension } from "@codemirror/state";
 import CodeMirror from '@uiw/react-codemirror';
 import { useEffect, useRef, useState } from 'react';
@@ -107,7 +107,7 @@ function App() {
   }) // runs continuously to ensure editor is full sized
 
   const checkIfEphemeral = (id: string): boolean => {
-    return (id.match(/[A-Z]/g) || []).length == 2
+    return (id.match(/[A-Z]/g) || []).length === 2
   }
 
   useEffect(() => {
@@ -158,7 +158,11 @@ function App() {
         }
       }, stack).then(snippetSpec => {
         setAlert("saving")
-        axios.post(environment.APIBaseURL + "e2e/" + stack.uuid, snippetSpec).then(() => {
+        axios.post(environment.APIBaseURL + "e2e/" + stack.uuid, snippetSpec, {
+          headers: {
+            'Ephemeral': ephemeral
+          }
+        }).then(() => {
           navigate('/' + stack.snippetID, { replace: true })
           setAlert("saved")
           setReadOnly(true)
