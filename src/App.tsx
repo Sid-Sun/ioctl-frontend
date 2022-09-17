@@ -189,7 +189,7 @@ function App() {
 
   return (
     <div className="flex">
-      <div className="md:w-2/3 lg:w-3/4 xl:w-4/5 w-screen" ref={editorContainerRef} >
+      <div className="md:w-2/3 lg:w-3/4 xl:w-4/5 2xl:w-5/6 w-screen" ref={editorContainerRef} >
         <CodeMirror
           autoFocus={true}
           value={document}
@@ -201,7 +201,7 @@ function App() {
           onChange={onDocumentChange}
         />
       </div>
-      <div className='md:block md:w-1/3 lg:w-1/4 xl:w-1/5 hidden'>
+      <div className='md:block md:w-1/3 lg:w-1/4 xl:w-1/5 2xl:w-1/6 hidden'>
         <MenuBar duplicateAndEdit={onDuplicateAndEdit} id={readOnly ? params.id : undefined} alert={alert} loading={loading} readOnly={readOnly} save={onSave} ephemeral={{ ephemeral, setEphemeral }} language={{ language, setLanguage }} theme={{ theme, setTheme }} font={{ fontSize, setFontSize }} wrapLine={{ wrapLine, setWrapLine }} />
       </div>
     </div>
