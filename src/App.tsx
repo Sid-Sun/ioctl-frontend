@@ -10,6 +10,7 @@ import { duotoneDark } from '@uiw/codemirror-theme-duotone';
 import './App.css';
 
 import MenuBar from './menubar'
+import NavBar from './navbar/navbar'
 
 import getFontSizeThemeExtension from './fonts'
 import useWindowDimensions from './dimensions';
@@ -42,6 +43,8 @@ function App() {
   let [selectedLanguage, setSelectedLanguage] = useState<Extension | undefined>()
   let [ephCryptoStack, setEphCryptoStack] = useState<Promise<CryptoStack> | undefined>(undefined)
   let [nonEphCryptoStack, setNonEphCryptoStack] = useState<Promise<CryptoStack> | undefined>(undefined)
+  // Menubar (Mobile) State
+  let [menubarVisible, setMenubarVisible] = useState<boolean>(false)
 
   useEffect(() => {
     localStorage.setItem('theme', theme)
@@ -187,22 +190,27 @@ function App() {
     setDocument(value)
   }, []);
 
+  let dimensions = useWindowDimensions()
+
   return (
-    <div className="flex">
-      <div className="md:w-2/3 lg:w-3/4 xl:w-4/5 2xl:w-5/6 w-screen" ref={editorContainerRef} >
-        <CodeMirror
-          autoFocus={true}
-          value={document}
-          readOnly={readOnly || loading}
-          theme={selectedTheme}
-          extensions={getExtensions()}
-          height={(useWindowDimensions().height).toString() + 'px'}
-          width={(editorWidth).toString() + 'px'}
-          onChange={onDocumentChange}
-        />
-      </div>
-      <div className='md:block md:w-1/3 lg:w-1/4 xl:w-1/5 2xl:w-1/6 hidden'>
-        <MenuBar duplicateAndEdit={onDuplicateAndEdit} id={readOnly ? params.id : undefined} alert={alert} loading={loading} readOnly={readOnly} save={onSave} ephemeral={{ ephemeral, setEphemeral }} language={{ language, setLanguage }} theme={{ theme, setTheme }} font={{ fontSize, setFontSize }} wrapLine={{ wrapLine, setWrapLine }} />
+    <div>
+      {dimensions.width < 768 && <NavBar menubar={menubarVisible} setMenubarDisplay={setMenubarVisible} />}
+      <div className="flex">
+        {!menubarVisible && <div className="md:w-2/3 lg:w-3/4 xl:w-4/5 2xl:w-5/6 w-screen" ref={editorContainerRef} >
+          <CodeMirror
+            autoFocus={true}
+            value={document}
+            readOnly={readOnly || loading}
+            theme={selectedTheme}
+            extensions={getExtensions()}
+            height={(dimensions.width >= 768 ? dimensions.height : dimensions.height - 60).toString() + 'px'}
+            width={(editorWidth).toString() + 'px'}
+            onChange={onDocumentChange}
+          />
+        </div>}
+        {(menubarVisible || dimensions.width >= 768) && <div className='w-full md:w-1/3 lg:w-1/4 xl:w-1/5 2xl:w-1/6'>
+          <MenuBar showBranding={!menubarVisible} duplicateAndEdit={onDuplicateAndEdit} id={readOnly ? params.id : undefined} alert={alert} loading={loading} readOnly={readOnly} save={onSave} ephemeral={{ ephemeral, setEphemeral }} language={{ language, setLanguage }} theme={{ theme, setTheme }} font={{ fontSize, setFontSize }} wrapLine={{ wrapLine, setWrapLine }} />
+        </div>}
       </div>
     </div>
   );

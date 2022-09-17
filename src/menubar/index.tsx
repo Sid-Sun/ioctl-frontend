@@ -27,6 +27,7 @@ interface menubarProps {
   duplicateAndEdit: () => void
   loading: boolean
   readOnly: boolean
+  showBranding: boolean
   alert: string
 }
 
@@ -41,9 +42,9 @@ function MenuBar(props: menubarProps) {
   return (
     <Fragment>
       <div className="bg-gray-800 text-white h-screen">
-        <div className="p-8 bg-purple-800">
+        {props.showBranding && <div className="p-8 bg-purple-800">
           <a className="font-mono text-center text-2xl block" href="/">i/o/ctl</a>
-        </div>
+        </div>}
         <div>
           <h4 className="font-mono text-center text-xl pb-4 pt-6">Editor Options</h4>
           <div className="items-center px-8">
@@ -104,7 +105,7 @@ function MenuBar(props: menubarProps) {
           </div>
         </div>
         {props.id && <div className="flex space-x-2 justify-center mt-3">
-          <a type="button" href={environment.APIBaseURL+"r/"+props.id} className="inline-block w-5/6 px-6 py-2.5 bg-pink-700 text-center text-white font-medium text-xs leading-tight uppercase rounded shadow-lg hover:bg-purple-700 hover:shadow-lg focus:bg-purple-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out" >
+          <a type="button" href={environment.APIBaseURL + "r/" + props.id} className="inline-block w-5/6 px-6 py-2.5 bg-pink-700 text-center text-white font-medium text-xs leading-tight uppercase rounded shadow-lg hover:bg-purple-700 hover:shadow-lg focus:bg-purple-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out" >
             raw
           </a>
         </div>}
