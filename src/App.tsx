@@ -29,6 +29,7 @@ function App() {
   let [alert, setAlert] = useState<string>('')
   let [dismisser, setDismisser] = useState<NodeJS.Timeout | undefined>()
   // Editor State Properties 
+  let [generateStack, setGenerateStack] = useState<boolean>(false)
   // TODO: Load and save to browser localStorage
   let [wrapLine, setWrapLine] = useState<boolean>(localStorage.getItem('wrapline') === "no" ? false : true)
   // @ts-ignore -- needed as TS thinks second localStorage.getItem() call would return null but it won't due to ternary
@@ -55,17 +56,19 @@ function App() {
   // start generation of non-eph crypto stack if ephemeral is changed to false
   // we don't generate both by default to save compute an prevent slowdown
   useEffect(() => {
-    if (ephemeral) {
-      if (ephCryptoStack === undefined) {
-        setEphCryptoStack(generateEncryptionStack(true))
+    if (generateStack) {
+      if (ephemeral) {
+        if (ephCryptoStack === undefined) {
+          setEphCryptoStack(generateEncryptionStack(true))
+        }
+      }
+      if (!ephemeral) {
+        if (nonEphCryptoStack === undefined) {
+          setNonEphCryptoStack(generateEncryptionStack(false))
+        }
       }
     }
-    if (!ephemeral) {
-      if (nonEphCryptoStack === undefined) {
-        setNonEphCryptoStack(generateEncryptionStack(false))
-      }
-    }
-  }, [ephemeral, ephCryptoStack, nonEphCryptoStack])
+  }, [ephemeral, ephCryptoStack, nonEphCryptoStack, generateStack])
 
   useEffect(() => {
     if (alert === "") {
@@ -139,6 +142,8 @@ function App() {
           }, 5000)
         })
       })
+    } else {
+      setGenerateStack(true)
     }
   }, [params]) // used to load snippet if param 'id' is present
 
