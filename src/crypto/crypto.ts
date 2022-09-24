@@ -3,6 +3,7 @@ import { hash as argon2 } from 'argon2-webworker'
 import pako from 'pako'
 import { Base64 } from 'js-base64'
 import { environment } from '../environment'
+import { SnippetModel, SnippetSpecModel } from '../model'
 
 
 export interface CryptoStack {
@@ -109,25 +110,6 @@ export function aeadEncrypt(snippet: SnippetModel, stack: CryptoStack): Promise<
             ephemeral: snippet.metadata.ephemeral
         })
     })
-}
-
-export interface SnippetSpecModel {
-    version: string
-    keysalt: string
-    ephemeral: boolean
-    initvector: string
-    ciphertext: string
-}
-
-export interface SnippetModel {
-    metadata: SnippetMetadataModel
-    data: string
-}
-
-interface SnippetMetadataModel {
-    id: string
-    language: string
-    ephemeral: boolean
 }
 
 export function aeadDecrypt(data: SnippetSpecModel, id: string): Promise<SnippetModel> {

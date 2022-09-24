@@ -22,6 +22,10 @@ interface menubarProps {
     ephemeral: boolean
     setEphemeral: (arg0: boolean) => void
   }
+  useE2EE: {
+    useE2EE: boolean
+    setUseE2EE: (arg0: boolean) => void
+  }
   id?: string
   save: () => void
   duplicateAndEdit: () => void
@@ -38,6 +42,7 @@ function MenuBar(props: menubarProps) {
   let { language, setLanguage } = props.language
   let { wrapLine, setWrapLine } = props.wrapLine
   let { ephemeral, setEphemeral } = props.ephemeral
+  let { useE2EE, setUseE2EE } = props.useE2EE
 
   return (
     <Fragment>
@@ -61,9 +66,13 @@ function MenuBar(props: menubarProps) {
             <br />
             <input onChange={e => setFontSize(parseInt(e.target.value))} value={fontSize} type="range" id="fontSize" max="26" min="10" step="1" className="w-full form-check-input" />
           </div>
-          <div className="items-stretch form-check px-8 py-3">
+          <div className="items-stretch form-check px-8 mt-1">
             <input checked={wrapLine} onChange={() => setWrapLine(!wrapLine)} type="checkbox" id="wordwrap" className="form-check-input" />
             <label htmlFor="wordwrap" className="text-center font-mono pl-2">Wrap Text</label>
+          </div>
+          <div className="items-stretch form-check px-8 mt-1 pb-3">
+            <input checked={useE2EE} onChange={() => setUseE2EE(!useE2EE)} type="checkbox" id="useE2EE" className="form-check-input" />
+            <label htmlFor="useE2EE" className="text-center font-mono pl-2">Use E2EE</label>
           </div>
           <h4 className="font-mono text-center text-xl py-4">Snippet Options</h4>
           <div className="items-center form-check pb-0 px-8">
