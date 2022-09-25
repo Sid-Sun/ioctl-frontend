@@ -142,12 +142,27 @@ function App() {
         setLanguage(snippet.metadata.language)
         setLoading(false)
       }).catch(e => {
-        console.log(e)
-        setAlert('something went wrong: ' + e)
-        setTimeout(() => {
-          onDuplicateAndEdit()
-          setLoading(false)
-        }, 5000)
+        switch (e.response.status) {
+          case 403:
+          case 404:
+            setAlert('snippet not found')
+            setDocument('snippet not found')
+            setTimeout(() => {
+              onDuplicateAndEdit()
+              setLoading(false)
+              setDocument('')
+            }, 5000)
+            break;
+          default:
+            console.log(e)
+            setAlert('something went wrong: ' + e)
+            setDocument('something went wrong: ' + e)
+            setTimeout(() => {
+              onDuplicateAndEdit()
+              setLoading(false)
+              setDocument('')
+            }, 5000)
+        }
       })
     } else {
       if (useE2EE) {
