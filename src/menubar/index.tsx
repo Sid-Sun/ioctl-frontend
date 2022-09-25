@@ -123,8 +123,8 @@ function MenuBar(props: menubarProps) {
             <span>{props.alert}</span>
           </div>}
         <div>
-          <a className="font-mono text-center text-l mt-4 mb-3 cursor-pointer block" href="/About">ℹ️ About</a>
-          <a className="font-mono text-center text-l my-3  cursor-pointer block" href="https://github.com/fitant" target="_blank">GitHub</a>
+          <a className="font-mono text-center text-l mt-4 mb-3 cursor-pointer block" href="/About">About</a>
+          <a className="font-mono text-center text-l my-3  cursor-pointer block" href="https://github.com/sid-sun/ioctl" target="_blank">GitHub</a>
           <a className="font-mono text-center text-l my-3 cursor-pointer block" href="/PrivacyPolicy">Privacy Policy</a>
         </div>
       </div>
