@@ -30,7 +30,7 @@ function App() {
   let [dismisser, setDismisser] = useState<NodeJS.Timeout | undefined>()
   let [desktopView, setDesktopView] = useState<boolean>(false)
   // Editor State Properties 
-  let [generateStack, setGenerateStack] = useState<boolean>(false)
+  let [saveMode, setSaveMode] = useState<boolean>(false)
   let [wrapLine, setWrapLine] = useState<boolean>(localStorage.getItem('wrapline') === "no" ? false : true)
   let [useE2EE, setUseE2EE] = useState<boolean>(useE2EEncryption())
   // @ts-ignore -- needed as TS thinks second localStorage.getItem() call would return null but it won't due to ternary
@@ -69,7 +69,7 @@ function App() {
   // start generation of non-eph crypto stack if ephemeral is changed to false
   // we don't generate both by default to save compute an prevent slowdown
   useEffect(() => {
-    if (generateStack) {
+    if (saveMode) {
       if (saveService === undefined) {
         switch (useE2EE) {
           case true:
@@ -82,7 +82,7 @@ function App() {
         }
       }
     }
-  }, [ephemeral, generateStack, saveService, useE2EE])
+  }, [ephemeral, saveMode, saveService, useE2EE])
 
   useEffect(() => {
     if (alert === "") {
@@ -165,9 +165,7 @@ function App() {
         }
       })
     } else {
-      if (useE2EE) {
-        setGenerateStack(true)
-      }
+      setSaveMode(true)
     }
   }, [])
 
@@ -194,6 +192,8 @@ function App() {
       setAlert("saved")
       setReadOnly(true)
       setLoading(false)
+      setSaveMode(false)
+      setSaveService(undefined)
     }).catch(e => {
       setLoading(false)
       console.log(e)
@@ -202,6 +202,7 @@ function App() {
   }
 
   const onDuplicateAndEdit = () => {
+    setSaveMode(true)
     setSaveService(undefined)
     setReadOnly(false)
     navigate("..")
