@@ -217,6 +217,9 @@ function App() {
 
   // handle window width change
   useEffect(() => {
+    if (desktopView) {
+      setMenubarVisible(false)
+    }
     setEditorHeight(desktopView ? dimensions.height : dimensions.height - 60)
     if (editorContainerRef.current) {
       setEditorWidth(editorContainerRef.current.offsetWidth)
