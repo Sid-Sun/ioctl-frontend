@@ -13,7 +13,7 @@ function navbar(props: navbarProps) {
                     <div className="container-fluid">
                         <a className="font-mono text-center text-xl block" href="/">i/o/ctl</a>
                     </div>
-                    <a onClick={() => props.setMenubarDisplay(!props.menubar)} className="font-mono text-center text-xl block">menu</a>
+                    <a onClick={() => props.setMenubarDisplay(!props.menubar)} className="font-mono text-center text-xl block">{props.menubar ? 'editor' : 'menu'}</a>
                 </div>
             </nav>
         </React.Fragment>
