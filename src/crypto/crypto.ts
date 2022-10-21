@@ -3,7 +3,7 @@ import { hash as argon2 } from 'argon2-webworker'
 import pako from 'pako'
 import { Base64 } from 'js-base64'
 import { environment } from '../environment'
-import { SnippetModel, SnippetSpecModel } from '../model'
+import { SnippetModel, SnippetSpecModel, SnippetSpecVersion } from '../model'
 
 
 export interface CryptoStack {
@@ -95,15 +95,16 @@ function generateIV() {
 
 export function aeadEncrypt(snippet: SnippetModel, stack: CryptoStack): Promise<SnippetSpecModel> {
     return new Promise(async (resolve, reject) => {
-        const snippetData = pako.deflate(JSON.stringify(snippet), {
+        snippet.data = Base64.fromUint8Array(pako.deflate(snippet.data, {
             level: 7,
-        })
+        }), true)
+        const snippetData = new TextEncoder().encode(JSON.stringify(snippet))
         // call encrypt with json encoded snippet, generated encrypted key and a nonce for GCM
         const ciphertext = await encrypt(stack.encryptionKey, snippetData, stack.initVector)
         // format and package ciphertext
         const ciphertextBytes = new Uint8Array(ciphertext)
         resolve({
-            version: "v1",
+            version: SnippetSpecVersion.v2,
             keysalt: Base64.fromUint8Array(stack.keySalt, true),
             initvector: Base64.fromUint8Array(stack.initVector, true),
             ciphertext: Base64.fromUint8Array(ciphertextBytes, true),
@@ -112,7 +113,7 @@ export function aeadEncrypt(snippet: SnippetModel, stack: CryptoStack): Promise<
     })
 }
 
-export function aeadDecrypt(data: SnippetSpecModel, id: string): Promise<SnippetModel> {
+export function aeadDecrypt(data: SnippetSpecModel, id: string, version: SnippetSpecVersion): Promise<SnippetModel> {
     return new Promise(async (resolve, reject) => {
         // B64 decode
         const keySalt: Uint8Array = Base64.toUint8Array(data.keysalt);
@@ -122,9 +123,18 @@ export function aeadDecrypt(data: SnippetSpecModel, id: string): Promise<Snippet
         // regenerate encryption key using ARGON2 with extracted salt and decrypt
         const key = await hasher(id, keySalt, ARGON2Config.Key);
         const plaintext = await decrypt(key.hash, ciphertext, iv);
-        // decompress snippet
-        const decompressedSnippet = pako.inflate(plaintext);
-        const snippet: SnippetModel = JSON.parse(new TextDecoder().decode(decompressedSnippet));
+        if (version === SnippetSpecVersion.v1) {
+            // decompress snippet
+            const decompressedSnippet = pako.inflate(plaintext);
+            const snippet: SnippetModel = JSON.parse(new TextDecoder().decode(decompressedSnippet));
+            resolve(snippet)
+            return
+        }
+        // V2
+        const snippet: SnippetModel = JSON.parse(new TextDecoder().decode(plaintext));
+        snippet.data = pako.inflate(Base64.toUint8Array(snippet.data), {
+            to: "string"
+        })
         resolve(snippet)
     })
 }

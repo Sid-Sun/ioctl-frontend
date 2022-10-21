@@ -1,7 +1,7 @@
 import axios from "axios";
 import { aeadDecrypt, aeadEncrypt, CryptoStack, generateEncryptionStack, getSnippetUUID } from "../crypto/crypto";
 import { environment } from "../environment";
-import { SnippetModel, SnippetSpecModel } from "../model";
+import { SnippetModel, SnippetSpecModel, SnippetSpecVersion } from "../model";
 import { ServiceInterface } from "./model";
 
 export class E2EService implements ServiceInterface {
@@ -47,7 +47,8 @@ export class E2EService implements ServiceInterface {
                 setAlert("downloading snippet")
                 axios.get<SnippetSpecModel>(environment.S3BaseURL + (this.checkIfEphemeral(id) ? "ephemeral/" + uuid : uuid)).then(snippetSpec => {
                     setAlert("decrypting")
-                    aeadDecrypt(snippetSpec.data, id).then(snippet => {
+                    const version = snippetSpec.data.version === SnippetSpecVersion.v2 ? SnippetSpecVersion.v2 : SnippetSpecVersion.v1;
+                    aeadDecrypt(snippetSpec.data, id, version).then(snippet => {
                         resolve(snippet)
                     })
                 }).catch(e => {

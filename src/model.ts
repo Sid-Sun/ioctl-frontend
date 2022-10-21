@@ -16,3 +16,8 @@ export interface SnippetSpecModel {
     initvector: string
     ciphertext: string
 }
+
+export enum SnippetSpecVersion {
+    v1 = "v1",
+    v2 = "v2",
+}
