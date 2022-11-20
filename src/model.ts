@@ -21,3 +21,10 @@ export enum SnippetSpecVersion {
     v1 = "v1",
     v2 = "v2",
 }
+
+export enum SnippetType {
+    StaticSnippet = +1,
+    EphemeralSnippet,
+    ProlongedSnippet,
+    InvalidSnippet
+}
